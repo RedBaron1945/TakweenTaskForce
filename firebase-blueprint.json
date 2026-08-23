@@ -1,0 +1,14 @@
+{
+  "entities": {
+    "app_data": {
+      "title": "AppData",
+      "description": "Global synchronized app state including students and attendance records",
+      "type": "object",
+      "properties": {
+        "students": { "type": "array", "description": "List of students" },
+        "records": { "type": "object", "description": "All attendance & wird records" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
