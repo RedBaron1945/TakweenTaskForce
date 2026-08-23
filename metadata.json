@@ -1,6 +1,0 @@
-{
-  "name": "متابعة طلاب تكوين النسيم",
-  "description": "سجل إلكتروني بسيط وسريع لمتابعة حضور وورد طلاب تكوين النسيم وحساب النقاط وتوليد تقارير الواتساب",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
