@@ -333,15 +333,19 @@ body {
 .nav-bar {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 60px;
+  z-index: 30;
+  backdrop-filter: blur(8px);
 }
 
 .nav-container {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 16px;
   display: flex;
-  gap: 12px;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -351,11 +355,11 @@ body {
 }
 
 .nav-tab {
-  padding: 14px 20px;
-  font-size: 0.95rem;
+  padding: 12px 18px;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--text-muted);
-  background: none;
+  background: transparent;
   border: none;
   border-bottom: 3px solid transparent;
   cursor: pointer;
@@ -364,15 +368,19 @@ body {
   gap: 8px;
   transition: all 0.2s ease;
   white-space: nowrap;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
 .nav-tab:hover {
   color: var(--primary);
+  background: rgba(239, 246, 255, 0.5);
 }
 
 .nav-tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
+  font-weight: 800;
+  background: rgba(239, 246, 255, 0.7);
 }
 
 .nav-badge {
@@ -381,13 +389,13 @@ body {
   font-size: 0.75rem;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
-  font-weight: 700;
+  font-weight: 800;
   transition: all 0.2s ease;
 }
 
 .nav-tab.active .nav-badge {
-  background-color: var(--primary-light);
-  color: var(--primary);
+  background-color: var(--primary);
+  color: #ffffff;
 }
 
 /* Main Container */
@@ -395,7 +403,7 @@ body {
   max-width: 1040px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 18px 16px 36px;
   flex: 1;
 }
 
@@ -406,11 +414,11 @@ body {
   border-radius: var(--radius-lg);
   padding: 16px 20px;
   margin-bottom: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.25s ease;
 }
 
 .family-switcher-header {
@@ -420,11 +428,11 @@ body {
 }
 
 .family-switcher-icon {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
 }
 
 .family-switcher-title {
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: #1e293b;
 }
@@ -439,7 +447,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 13px 18px;
   background-color: #f8fafc;
   border: 2px solid #e2e8f0;
   border-radius: var(--radius-md);
@@ -447,6 +455,7 @@ body {
   font-family: inherit;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: right;
+  position: relative;
 }
 
 .family-select-btn:hover {
@@ -455,36 +464,52 @@ body {
   transform: translateY(-1px);
 }
 
-.family-select-btn.active {
-  background-color: #eff6ff;
-  border-color: var(--primary);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
+.family-select-btn[data-family="bamousa"].active {
+  background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);
+  border-color: #0055b8;
+  box-shadow: 0 4px 14px rgba(0, 85, 184, 0.15);
   transform: translateY(-1px);
 }
 
+.family-select-btn[data-family="bamousa"].active .family-btn-badge {
+  color: #0055b8;
+}
+
+.family-select-btn[data-family="bamousa"].active .family-btn-counter {
+  background-color: #0055b8;
+  color: #ffffff;
+}
+
+.family-select-btn[data-family="akram"].active {
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+  border-color: #d97706;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.15);
+  transform: translateY(-1px);
+}
+
+.family-select-btn[data-family="akram"].active .family-btn-badge {
+  color: #d97706;
+}
+
+.family-select-btn[data-family="akram"].active .family-btn-counter {
+  background-color: #d97706;
+  color: #ffffff;
+}
+
 .family-btn-badge {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 800;
   color: #0f172a;
 }
 
-.family-select-btn.active .family-btn-badge {
-  color: var(--primary);
-}
-
 .family-btn-counter {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background-color: #e2e8f0;
   color: #475569;
   transition: all 0.15s ease;
-}
-
-.family-select-btn.active .family-btn-counter {
-  background-color: var(--primary);
-  color: #ffffff;
 }
 
 /* Report Family Selection Pills inside Modal */
@@ -4376,6 +4401,7 @@ function setupEventListeners() {
     monthSelect.value = appState.currentMonth;
     monthSelect.addEventListener('change', (e) => {
       appState.currentMonth = e.target.value;
+      appState.statsMonth = e.target.value;
       saveStateLocally();
       renderCurrentTab();
     });
@@ -4427,26 +4453,22 @@ function setupEventListeners() {
   if (markAllPresentBtn) {
     markAllPresentBtn.addEventListener('click', () => {
       const day = appState.currentDay;
+      const dayConfig = DAYS_CONFIG.find(d => d.id === day);
+      if (!dayConfig) return;
+
       students.forEach(s => {
         const key = `${s.id}_${appState.currentMonth}_${appState.currentWeek}_${day}`;
         if (!records[key]) records[key] = {};
         
-        if (day === 'thursday') {
-          records[key].thursdayEarly = 'done';
-          records[key].thursdayProgram = 'done';
-        } else {
-          records[key].attendance = 'present';
-          records[key].wird = 'done';
-          if (day === 'tuesday') {
-            records[key].tuesdayLesson = 'present';
-          }
-        }
+        dayConfig.items.forEach(item => {
+          records[key][item.id] = (item.type === 'attendance') ? 'present' : 'done';
+        });
       });
       triggerCloudSync();
       renderTrackingDayView();
       renderLeaderboard();
       updateHeaderStats();
-      showToast('تم تسجيل جميع الطلاب بالإنجاز الكامل لهذا اليوم ✨');
+      showToast(`تم تسجيل جميع الطلاب بالإنجاز الكامل (${dayConfig.name} - ${dayConfig.maxPoints} درجة) ✨`);
     });
   }
 
@@ -4671,6 +4693,7 @@ function renderCurrentTab() {
   const statsView = document.getElementById('view-stats');
   const studentsView = document.getElementById('view-students');
   const controlBar = document.getElementById('control-bar');
+  const familySwitcherBar = document.getElementById('family-switcher-bar');
 
   // مزامنة حالة التبويب النشط
   document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -4682,12 +4705,16 @@ function renderCurrentTab() {
   });
 
   const isTracking = appState.currentTab === 'tracking';
+  const introWelcomeCard = document.getElementById('intro-welcome-card');
+
+  if (introWelcomeCard) introWelcomeCard.style.display = isTracking ? 'flex' : 'none';
   if (trackingView) trackingView.style.display = isTracking ? 'block' : 'none';
   if (leaderboardView) leaderboardView.style.display = appState.currentTab === 'leaderboard' ? 'block' : 'none';
   if (statsView) statsView.style.display = appState.currentTab === 'stats' ? 'block' : 'none';
   if (studentsView) studentsView.style.display = appState.currentTab === 'students' ? 'block' : 'none';
 
-  // إخفاء شريط الشهر والأسابيع والأيام عند فتح ترتيب الطلاب أو الإحصائيات أو الطلاب
+  // إظهار شريط اختيار الأسرة وشريط التحكم فقط في تبويب المتابعة
+  if (familySwitcherBar) familySwitcherBar.style.display = isTracking ? 'flex' : 'none';
   if (controlBar) controlBar.style.display = isTracking ? 'flex' : 'none';
 
   if (appState.currentTab === 'tracking') {
@@ -5178,9 +5205,7 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
       mostCommittedCount: 0,
       mostCommittedStudents: [],
       overallAttendanceRate: 0,
-      overallWirdRate: 0,
-      tuesdayLessonRate: 0,
-      thursdayParticipationRate: 0,
+      overallQuranRate: 0,
       weeklyStats: [],
       studentSummaries: []
     };
@@ -5189,47 +5214,56 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
   let grandTotalPoints = 0;
   let totalAttPresent = 0;
   let totalAttRecorded = 0;
-  let totalWirdDone = 0;
-  let totalWirdRecorded = 0;
-  let totalTuesdayPresent = 0;
-  let totalTuesdayRecorded = 0;
-  let totalThursdayPresent = 0;
-  let totalThursdayRecorded = 0;
+  let totalQuranDone = 0;
+  let totalQuranRecorded = 0;
+  let activeWeeksCount = 0;
 
   // Analysis per week
   const weeklyStats = WEEKS_LIST.map(week => {
     let weekTotalPts = 0;
     let weekAttPresent = 0;
     let weekAttCount = 0;
-    let weekWirdDone = 0;
-    let weekWirdCount = 0;
+    let weekQuranDone = 0;
+    let weekQuranCount = 0;
     let weekTopStudent = { name: '-', points: 0 };
+    let weekHasData = false;
 
     students.forEach(s => {
       const { total } = calculateStudentWeekPoints(s.id, week, month);
       weekTotalPts += total;
+      if (total > 0) weekHasData = true;
       if (total > weekTopStudent.points) {
         weekTopStudent = { name: s.name, points: total };
       }
 
       DAYS_CONFIG.forEach(d => {
         const rec = getStudentDayRecord(s.id, d.id, week, month);
-        if (d.id !== 'thursday') {
-          if (rec.attendance === 'present' || rec.attendance === 'excused' || rec.attendance === 'absent') {
-            weekAttCount++;
-            if (rec.attendance === 'present') weekAttPresent++;
-          }
-          if (rec.wird === 'done' || rec.wird === 'partial' || rec.wird === 'none') {
-            weekWirdCount++;
-            if (rec.wird === 'done') weekWirdDone++;
-          }
+
+        // Attendance (كل الأيام)
+        if (rec.attendance === 'present' || rec.attendance === 'excused' || rec.attendance === 'absent') {
+          weekAttCount++;
+          if (rec.attendance === 'present') weekAttPresent++;
+        }
+
+        // الحفظ والمراجعة القرآنية
+        if (rec.hifz) {
+          weekQuranCount++;
+          if (rec.hifz === 'done' || rec.hifz === 'present') weekQuranDone++;
+          else if (rec.hifz === 'partial' || rec.hifz === 'excused') weekQuranDone += 0.5;
+        }
+        if (rec.murajaah) {
+          weekQuranCount++;
+          if (rec.murajaah === 'done' || rec.murajaah === 'present') weekQuranDone++;
+          else if (rec.murajaah === 'partial' || rec.murajaah === 'excused') weekQuranDone += 0.5;
         }
       });
     });
 
+    if (weekHasData) activeWeeksCount++;
+
     const weekAvg = totalStudents > 0 ? (weekTotalPts / totalStudents).toFixed(1) : 0;
     const weekAttRate = weekAttCount > 0 ? Math.round((weekAttPresent / weekAttCount) * 100) : 0;
-    const weekWirdRate = weekWirdCount > 0 ? Math.round((weekWirdDone / weekWirdCount) * 100) : 0;
+    const weekQuranRate = weekQuranCount > 0 ? Math.round((weekQuranDone / weekQuranCount) * 100) : 0;
 
     return {
       week,
@@ -5237,7 +5271,7 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
       avgPoints: Number(weekAvg),
       topStudent: weekTopStudent,
       attRate: weekAttRate,
-      wirdRate: weekWirdRate
+      quranRate: weekQuranRate
     };
   });
 
@@ -5246,9 +5280,8 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
     let studentMonthPts = 0;
     let weekBreakdown = {};
     let attDays = { present: 0, excused: 0, absent: 0, total: 0 };
-    let wirdDays = { done: 0, partial: 0, none: 0, total: 0 };
-    let tuesdayCount = { present: 0, total: 0 };
-    let thursdayCount = { done: 0, total: 0 };
+    let hifzDays = { done: 0, partial: 0, none: 0, total: 0 };
+    let murajaahDays = { done: 0, partial: 0, none: 0, total: 0 };
 
     WEEKS_LIST.forEach(week => {
       const { total } = calculateStudentWeekPoints(s.id, week, month);
@@ -5257,41 +5290,48 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
 
       DAYS_CONFIG.forEach(d => {
         const rec = getStudentDayRecord(s.id, d.id, week, month);
-        if (d.id === 'thursday') {
-          if (rec.thursdayEarly || rec.thursdayProgram) {
-            thursdayCount.total++;
-            totalThursdayRecorded++;
-            if (rec.thursdayEarly === 'done' || rec.thursdayProgram === 'done') {
-              thursdayCount.done++;
-              totalThursdayPresent++;
-            }
-          }
-        } else {
-          if (rec.attendance === 'present' || rec.attendance === 'excused' || rec.attendance === 'absent') {
-            attDays.total++;
-            totalAttRecorded++;
-            if (rec.attendance === 'present') { attDays.present++; totalAttPresent++; }
-            else if (rec.attendance === 'excused') { attDays.excused++; }
-            else if (rec.attendance === 'absent') { attDays.absent++; }
-          }
 
-          if (rec.wird === 'done' || rec.wird === 'partial' || rec.wird === 'none') {
-            wirdDays.total++;
-            totalWirdRecorded++;
-            if (rec.wird === 'done') { wirdDays.done++; totalWirdDone++; }
-            else if (rec.wird === 'partial') { wirdDays.partial++; }
-            else if (rec.wird === 'none') { wirdDays.none++; }
+        // Attendance (جميع أيام الأسبوع)
+        if (rec.attendance === 'present' || rec.attendance === 'excused' || rec.attendance === 'absent') {
+          attDays.total++;
+          totalAttRecorded++;
+          if (rec.attendance === 'present') { 
+            attDays.present++; 
+            totalAttPresent++; 
+          } else if (rec.attendance === 'excused') { 
+            attDays.excused++; 
+          } else if (rec.attendance === 'absent') { 
+            attDays.absent++; 
           }
+        }
 
-          if (d.id === 'tuesday') {
-            if (rec.tuesdayLesson === 'present' || rec.tuesdayLesson === 'excused' || rec.tuesdayLesson === 'absent') {
-              tuesdayCount.total++;
-              totalTuesdayRecorded++;
-              if (rec.tuesdayLesson === 'present') {
-                tuesdayCount.present++;
-                totalTuesdayPresent++;
-              }
-            }
+        // الحفظ
+        if (rec.hifz) {
+          hifzDays.total++;
+          totalQuranRecorded++;
+          if (rec.hifz === 'done' || rec.hifz === 'present') {
+            hifzDays.done++;
+            totalQuranDone++;
+          } else if (rec.hifz === 'partial' || rec.hifz === 'excused') {
+            hifzDays.partial++;
+            totalQuranDone += 0.5;
+          } else {
+            hifzDays.none++;
+          }
+        }
+
+        // المراجعة
+        if (rec.murajaah) {
+          murajaahDays.total++;
+          totalQuranRecorded++;
+          if (rec.murajaah === 'done' || rec.murajaah === 'present') {
+            murajaahDays.done++;
+            totalQuranDone++;
+          } else if (rec.murajaah === 'partial' || rec.murajaah === 'excused') {
+            murajaahDays.partial++;
+            totalQuranDone += 0.5;
+          } else {
+            murajaahDays.none++;
           }
         }
       });
@@ -5299,24 +5339,27 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
 
     grandTotalPoints += studentMonthPts;
 
-    // Rate calculation (100 pts per week * 5 weeks = 500 max points)
-    const maxPossiblePoints = 500;
+    // احتساب نسبة الالتزام بناء على الأسابيع التي تم رصد بيانات فيها (100 نقطة لكل أسبوع)
+    const effectiveWeeks = Math.max(1, activeWeeksCount || 1);
+    const maxPossiblePoints = effectiveWeeks * 100;
     const pointsCommitmentRate = Math.min(100, Math.max(0, Math.round((studentMonthPts / maxPossiblePoints) * 100)));
     const attendancePct = attDays.total > 0 ? Math.round((attDays.present / attDays.total) * 100) : 0;
-    const wirdPct = wirdDays.total > 0 ? Math.round((wirdDays.done / wirdDays.total) * 100) : 0;
+    const totalQuranTasks = hifzDays.total + murajaahDays.total;
+    const doneQuranTasks = hifzDays.done + murajaahDays.done + (hifzDays.partial + murajaahDays.partial) * 0.5;
+    const quranPct = totalQuranTasks > 0 ? Math.round((doneQuranTasks / totalQuranTasks) * 100) : 0;
 
     return {
       id: s.id,
       name: s.name,
+      family: s.family || 'bamousa',
       totalPoints: studentMonthPts,
       weekBreakdown,
       attDays,
-      wirdDays,
-      tuesdayCount,
-      thursdayCount,
+      hifzDays,
+      murajaahDays,
       commitmentRate: pointsCommitmentRate,
       attendancePct,
-      wirdPct
+      quranPct
     };
   });
 
@@ -5325,12 +5368,10 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
 
   const averagePoints = totalStudents > 0 ? (grandTotalPoints / totalStudents).toFixed(1) : 0;
   const overallAttendanceRate = totalAttRecorded > 0 ? Math.round((totalAttPresent / totalAttRecorded) * 100) : 0;
-  const overallWirdRate = totalWirdRecorded > 0 ? Math.round((totalWirdDone / totalWirdRecorded) * 100) : 0;
-  const tuesdayLessonRate = totalTuesdayRecorded > 0 ? Math.round((totalTuesdayPresent / totalTuesdayRecorded) * 100) : 0;
-  const thursdayParticipationRate = totalThursdayRecorded > 0 ? Math.round((totalThursdayPresent / totalThursdayRecorded) * 100) : 0;
+  const overallQuranRate = totalQuranRecorded > 0 ? Math.round((totalQuranDone / totalQuranRecorded) * 100) : 0;
 
   // Family Attendance Comparison Analysis (مقارنة نسبة الحضور بين أسرة باموسى وأسرة أكرم)
-  const bamousaStudents = students.filter(s => s.family === 'bamousa');
+  const bamousaStudents = students.filter(s => (s.family || 'bamousa') === 'bamousa');
   const akramStudents = students.filter(s => s.family === 'akram');
 
   let bamousaAttPresent = 0;
@@ -5346,7 +5387,7 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
   let akramTotalPoints = 0;
 
   studentSummaries.forEach(s => {
-    const isBamousa = bamousaStudents.some(b => b.id === s.id);
+    const isBamousa = (s.family || 'bamousa') === 'bamousa';
     if (isBamousa) {
       bamousaTotalPoints += s.totalPoints;
       bamousaAttPresent += s.attDays.present;
@@ -5398,9 +5439,9 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
     leader: familyLeader
   };
 
-  // Most committed students: (have points and commitment rate >= 60% or points above average)
+  // Most committed students: students with recorded points > 0
   const avgPtsVal = Number(averagePoints);
-  const mostCommittedStudents = studentSummaries.filter(s => s.totalPoints > 0 && (s.commitmentRate >= 60 || s.totalPoints >= avgPtsVal));
+  const mostCommittedStudents = studentSummaries.filter(s => s.totalPoints > 0 && (s.totalPoints >= avgPtsVal || s.commitmentRate >= 50));
 
   return {
     month,
@@ -5410,9 +5451,7 @@ function getMonthlyPerformanceSummary(month = appState.statsMonth || appState.cu
     mostCommittedCount: mostCommittedStudents.length,
     mostCommittedStudents,
     overallAttendanceRate,
-    overallWirdRate,
-    tuesdayLessonRate,
-    thursdayParticipationRate,
+    overallQuranRate,
     weeklyStats,
     studentSummaries,
     familyComparison
@@ -5423,7 +5462,7 @@ function renderMonthlyStats() {
   const selectedMonth = appState.statsMonth || appState.currentMonth || 'شهر 1';
   const subtitle = document.getElementById('stats-period-subtitle');
   if (subtitle) {
-    subtitle.textContent = `ملخص بسيط وشامل لنقاط وحضور وإنجاز الطلاب في (${selectedMonth})`;
+    subtitle.textContent = `ملخص شامل ودقيق لنقاط وحضور وإنجاز الطلاب في (${selectedMonth})`;
   }
 
   const monthSelect = document.getElementById('stats-month-select');
@@ -5753,18 +5792,18 @@ function renderMonthlyKPIs(stats) {
       </div>
     </div>
 
-    <!-- 4. معدل إنجاز الورد اليومي -->
+    <!-- 4. معدل إنجاز الحفظ والمراجعة القرآنية -->
     <div class="kpi-card kpi-wird">
       <div class="kpi-header">
-        <span class="kpi-title">نسبة إنجاز الورد</span>
+        <span class="kpi-title">إنجاز الحفظ والمراجعة</span>
         <span class="kpi-icon">📖</span>
       </div>
       <div class="kpi-value-row">
-        <span class="kpi-value">${stats.overallWirdRate}%</span>
-        <span class="kpi-unit">إنجاز كامل</span>
+        <span class="kpi-value">${stats.overallQuranRate}%</span>
+        <span class="kpi-unit">إنجاز القرآن</span>
       </div>
       <div class="kpi-footer">
-        <span>التزام الأوراد والتلاوة القرآنية</span>
+        <span>التزام الحفظ والمراجعة القرآنية</span>
       </div>
     </div>
   `;
@@ -5838,7 +5877,7 @@ function copyMonthlyStatsReport() {
   text += `🎯 *متوسط النقاط الكلي:* ${stats.averagePoints} نقطة / طالب\n`;
   text += `🌟 *الطلاب الأكثر التزاماً:* ${stats.mostCommittedCount} طالب (${stats.totalStudents > 0 ? Math.round((stats.mostCommittedCount / stats.totalStudents) * 100) : 0}%)\n`;
   text += `👥 *معدل التزام الحضور العام:* ${stats.overallAttendanceRate}%\n`;
-  text += `📖 *معدل إنجاز الورد اليومي:* ${stats.overallWirdRate}%\n`;
+  text += `📖 *معدل إنجاز الحفظ والمراجعة القرآنية:* ${stats.overallQuranRate}%\n`;
   text += `✨ *إجمالي النقاط المسجلة:* ${stats.totalPoints.toLocaleString('ar-SA')} نقطة\n\n`;
 
   if (stats.familyComparison) {
