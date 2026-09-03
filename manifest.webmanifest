@@ -1,0 +1,20 @@
+{
+  "name": "متابعة طلاب تكوين النسيم",
+  "short_name": "تكوين النسيم",
+  "description": "سجل إلكتروني متكامل لمتابعة طلاب تكوين النسيم وحساب النقاط وتصدير تقارير الواتساب والإحصائيات",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0055b8",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "./logo.png",
+      "sizes": "800x800",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
