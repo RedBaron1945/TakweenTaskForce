@@ -4517,6 +4517,23 @@ textarea.input-text {
               <!-- قائمة الطلاب تظهر هنا -->
             </div>
           </div>
+
+          <!-- بطاقة النسخ الاحتياطي -->
+          <div class="add-student-card">
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: #475569; margin-bottom: 4px;">📦 نسخة احتياطية للبيانات</h3>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">
+              نزّل نسخة من كل بيانات الطلاب والسجلات على جهازك قبل أي تحديث، ويمكنك استيرادها لاحقاً لاستعادة البيانات إذا احتجت لذلك.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline btn-sm" id="btn-download-backup">
+                <span>⬇️ تنزيل نسخة احتياطية (JSON)</span>
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-trigger-import-backup">
+                <span>⬆️ استيراد نسخة احتياطية</span>
+              </button>
+              <input type="file" id="backup-file-input" accept="application/json,.json" style="display: none;" />
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -5576,6 +5593,7 @@ async function initApp() {
   loadData();
   setupEventListeners();
   setupNetworkStatusListeners();
+  setupBackupControls();
   registerServiceWorker();
   updateDayPills();
   renderCurrentTab();
@@ -8833,6 +8851,88 @@ function renderStudentsList() {
   });
 
   container.innerHTML = html;
+}
+
+function setupBackupControls() {
+  const btnDownload = document.getElementById('btn-download-backup');
+  const btnTriggerImport = document.getElementById('btn-trigger-import-backup');
+  const fileInput = document.getElementById('backup-file-input');
+
+  if (btnDownload) {
+    btnDownload.addEventListener('click', () => {
+      const backup = {
+        appName: 'متابعة طلاب تكوين النسيم',
+        exportedAt: new Date().toISOString(),
+        students: students,
+        records: records
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `نسخة-احتياطية-تكوين-النسيم-${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('تم تنزيل النسخة الاحتياطية بنجاح 📦');
+    });
+  }
+
+  if (btnTriggerImport && fileInput) {
+    btnTriggerImport.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        let parsed;
+        try {
+          parsed = JSON.parse(event.target.result);
+        } catch (err) {
+          showToast('ملف غير صالح: تعذّرت قراءة JSON ❌');
+          fileInput.value = '';
+          return;
+        }
+
+        if (!parsed || !Array.isArray(parsed.students) || typeof parsed.records !== 'object' || parsed.records === null) {
+          showToast('ملف النسخة الاحتياطية غير متوافق مع صيغة التطبيق ❌');
+          fileInput.value = '';
+          return;
+        }
+
+        const studentCount = parsed.students.length;
+        let exportDateLabel = 'غير معروف';
+        if (parsed.exportedAt) {
+          const d = new Date(parsed.exportedAt);
+          if (!isNaN(d.getTime())) exportDateLabel = d.toLocaleString('ar-SA');
+        }
+
+        openConfirmModal({
+          title: '⚠️ استيراد نسخة احتياطية',
+          message: `سيتم استبدال كل البيانات الحالية (الطلاب والسجلات) ببيانات هذه النسخة الاحتياطية (${studentCount} طالباً، بتاريخ ${exportDateLabel}). هذا الإجراء يستبدل البيانات الحالية فوراً على كل الأجهزة المتصلة. هل تريد المتابعة؟`,
+          btnText: 'نعم، استبدال البيانات',
+          onConfirm: () => {
+            students = parsed.students;
+            records = parsed.records;
+            triggerCloudSync();
+            renderCurrentTab();
+            updateHeaderStats();
+            renderStudentsList();
+            showToast('تم استيراد النسخة الاحتياطية بنجاح ✅');
+          }
+        });
+
+        fileInput.value = '';
+      };
+      reader.readAsText(file, 'UTF-8');
+    });
+  }
 }
 
 let confirmCallback = null;
