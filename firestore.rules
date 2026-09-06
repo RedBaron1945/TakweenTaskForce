@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // App state synchronization (students, records).
+    // The document ID must equal the CURRENT verified PIN hash (see
+    // src/firebaseSync.js). A client only knows the right docId if it has
+    // correctly entered the admin PIN, so this is what actually gates the
+    // student data — previously this collection was open to anyone who had
+    // the Firebase project config, regardless of the PIN screen.
+    match /app_data/{docId} {
+      allow read, write: if docId == get(/databases/$(database)/documents/system_security/access_vault).data.pinHash;
+    }
+
+    // System security vault: NEVER allow public client reads!
+    // Protects the supervisor access hash from being exposed in client DevTools.
+    match /system_security/{docId} {
+      allow read: if false;
+      // Allow update only when authorized by providing the current token
+      allow update: if request.resource.data.previousToken == resource.data.pinHash
+                    && request.resource.data.pinHash is string
+                    && request.resource.data.pinHash.size() == 64;
+      allow create, delete: if false;
+    }
+
+    // Server-side PIN verification collection:
+    // Firestore security rules evaluate the submitted token against the access vault on the cloud server.
+    // If it matches, the write succeeds. If incorrect, it returns permission-denied.
+    match /pin_verifications/{attemptId} {
+      allow create: if request.resource.data.token is string
+                    && request.resource.data.token.size() == 64
+                    && request.resource.data.token == get(/databases/$(database)/documents/system_security/access_vault).data.pinHash;
+      allow read, update, delete: if false;
+    }
+  }
+}
+

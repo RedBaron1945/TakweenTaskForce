@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- منع محركات البحث وعناكب قوقل من أرشفة أو فهرسة الموقع نهائياً -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <title>متابعة طلاب تكوين النسيم</title>
+    <meta name="description" content="سجل إلكتروني بسيط وسريع لمتابعة حضور وورد طلاب تكوين النسيم وحساب النقاط وتوليد تقارير الواتساب" />
+    <meta property="og:title" content="متابعة طلاب تكوين النسيم" />
+    <meta property="og:description" content="سجل إلكتروني بسيط وسريع لمتابعة حضور وورد طلاب تكوين النسيم وحساب النقاط وتوليد تقارير الواتساب" />
+    <meta name="theme-color" content="#0055b8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="تكوين النسيم" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <link rel="apple-touch-icon" href="./assets/logo.svg" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- شاشة قفل التطبيق برمز المرور (PIN Lock Screen) للمصرح لهم فقط -->
+    <div id="pin-lock-screen" class="pin-lock-screen">
+      <div class="pin-card-wrapper">
+        <div class="pin-card" id="pin-card-box">
+          <div class="pin-card-header">
+            <div class="pin-brand-logo-wrapper">
+              <img src="./src/assets/images/regenerated_image_1788530665665.png" alt="شعار تكوين النسيم" class="pin-brand-logo" />
+            </div>
+            <h1 class="pin-brand-title">متابعة طلاب تكوين النسيم</h1>
+            <p class="pin-brand-subtitle">سجل إلكتروني لمتابعة الحضور والورد وحساب النقاط</p>
+            <div class="pin-auth-badge">
+              <span class="pin-lock-icon">🔒</span>
+              <span>نقطة التفتيش العسكرية البسولية</span>
+            </div>
+          </div>
+
+          <div class="pin-card-body">
+            <div class="pin-instruction">
+              يرجى إدخال رمز المرور (PIN) للمتابعة:
+            </div>
+
+            <!-- PIN Display Bullets -->
+            <div class="pin-display-wrapper" id="pin-display-wrapper">
+              <div class="pin-dots-container" id="pin-dots-container">
+                <span class="pin-dot" data-idx="0"></span>
+                <span class="pin-dot" data-idx="1"></span>
+                <span class="pin-dot" data-idx="2"></span>
+                <span class="pin-dot" data-idx="3"></span>
+              </div>
+              <button type="button" class="btn-toggle-pin-visibility" id="btn-toggle-pin-visibility" title="إظهار / إخفاء الأرقام">
+                <span id="pin-visibility-icon">👁️</span>
+              </button>
+            </div>
+
+            <div class="pin-text-preview" id="pin-text-preview" style="display: none;"></div>
+
+            <!-- Hidden input for typing on physical keyboard / autocomplete -->
+            <input 
+              type="password" 
+              id="pin-hidden-input" 
+              inputmode="numeric" 
+              pattern="[0-9]*" 
+              maxlength="8" 
+              autocomplete="current-password" 
+              aria-label="رمز المرور PIN"
+              style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;"
+            />
+
+            <!-- Error message container -->
+            <div class="pin-error-msg" id="pin-error-msg" style="display: none;">
+              <span id="pin-error-text">⚠️ رمز المرور غير صحيح، يرجى المحاولة مرة أخرى</span>
+            </div>
+
+            <!-- Numeric Touch Keypad -->
+            <div class="pin-keypad" id="pin-keypad">
+              <button type="button" class="pin-key" data-digit="1">1</button>
+              <button type="button" class="pin-key" data-digit="2">2</button>
+              <button type="button" class="pin-key" data-digit="3">3</button>
+              <button type="button" class="pin-key" data-digit="4">4</button>
+              <button type="button" class="pin-key" data-digit="5">5</button>
+              <button type="button" class="pin-key" data-digit="6">6</button>
+              <button type="button" class="pin-key" data-digit="7">7</button>
+              <button type="button" class="pin-key" data-digit="8">8</button>
+              <button type="button" class="pin-key" data-digit="9">9</button>
+              <button type="button" class="pin-key pin-key-action" id="pin-key-backspace" title="مسح رقم">⌫</button>
+              <button type="button" class="pin-key" data-digit="0">0</button>
+              <button type="button" class="pin-key pin-key-action pin-key-submit" id="pin-key-submit" title="فتح التطبيق">
+                <span>🔓 فتح</span>
+              </button>
+            </div>
+
+            <div class="pin-footer-actions">
+              <label class="pin-remember-label">
+                <input type="checkbox" id="pin-remember-device" checked />
+                <span>تذكر تسجيل الدخول على هذا الجهاز</span>
+              </label>
+              <div class="pin-admin-help-note" id="pin-admin-help-note">
+                <span class="pin-help-icon">ℹ️</span>
+                <span>في حالة نسيان رمز المرور تواصل مع الأدمن بسيل</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- واجهة التطبيق الرئيسية (متاحة للمصرح لهم بعد إدخال PIN) -->
+    <div id="app-layout" class="app-layout">
+      <!-- الهيدر الرئيسي -->
+      <header class="app-header" id="app-header">
+        <div class="header-container">
+          <div class="brand">
+            <div class="brand-logo-wrapper" id="brand-icon">
+              <img src="./src/assets/images/regenerated_image_1788530665665.png" alt="شعار تكوين النسيم" class="brand-logo-img" />
+            </div>
+            <div>
+              <h1 class="brand-title" id="app-title">متابعة طلاب تكوين النسيم</h1>
+              <p class="brand-subtitle">سجل الحضور والورد وحساب النقاط</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <div class="header-stat-pill" id="header-total-points">
+              <span>✨ إجمالي النقاط:</span>
+              <b id="header-points-val">0</b>
+            </div>
+            <div class="autosave-badge saved" id="autosave-badge" title="الحفظ التلقائي للبيانات نشط لحظياً عند تغيير حالة أي طالب">
+              <span class="autosave-pulse-dot"></span>
+              <span class="autosave-text" id="autosave-label">حفظ تلقائي فوري مفعّل</span>
+            </div>
+            <div class="cloud-sync-status" id="cloud-sync-status" title="حالة المزامنة السحابية">
+              <span class="sync-indicator online"></span>
+              <span class="sync-text">متزامن سحابياً</span>
+            </div>
+            <button class="btn btn-whatsapp btn-open-report" id="btn-header-report" title="نسخ تقرير الواتساب">
+              <span>📋 نسخ التقرير</span>
+            </button>
+            <button class="btn btn-header-action btn-header-pin" id="btn-header-change-pin" title="إدارة وتغيير رمز المرور (PIN)">
+              <span>🔑 رمز PIN</span>
+            </button>
+            <button class="btn btn-header-action btn-header-lock" id="btn-header-lock" title="قفل التطبيق برمز المرور">
+              <span>🔒 قفل</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+    <!-- شريط التبويبات -->
+    <nav class="nav-bar" id="main-nav">
+      <div class="nav-container">
+        <button class="nav-tab active" data-tab="tracking" id="tab-tracking">
+          <span>📝 الرصد اليومي</span>
+        </button>
+        <button class="nav-tab" data-tab="followup" id="tab-followup">
+          <span>🔍 المتابعة</span>
+        </button>
+        <button class="nav-tab" data-tab="leaderboard" id="tab-leaderboard">
+          <span>🏆 ترتيب الفوارس</span>
+        </button>
+        <button class="nav-tab" data-tab="stats" id="tab-stats">
+          <span>📊 إحصائيات الشهر</span>
+        </button>
+        <button class="nav-tab" data-tab="students" id="tab-students">
+          <span>👥 الطلاب</span>
+          <span class="nav-badge" id="students-count-badge">46</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- الحاوية الرئيسية -->
+    <main class="main-container" id="main-content">
+      <!-- شريط اختيار الأسرة (يظهر في صفحة المتابعة أعلى شريط التحكم والجدول) -->
+      <section class="family-switcher-card" id="family-switcher-bar">
+        <div class="family-switcher-header">
+          <span class="family-switcher-icon">👥</span>
+          <span class="family-switcher-title">اختر الأسرة للمتابعة والرصد:</span>
+        </div>
+        <div class="family-buttons-grid">
+          <button type="button" class="family-select-btn active" data-family="bamousa" id="btn-family-bamousa">
+            <span class="family-btn-badge">🏛️ أسرة باموسى</span>
+            <span class="family-btn-counter" id="count-family-bamousa">23 طالب</span>
+          </button>
+          <button type="button" class="family-select-btn" data-family="akram" id="btn-family-akram">
+            <span class="family-btn-badge">🌟 أسرة أكرم</span>
+            <span class="family-btn-counter" id="count-family-akram">23 طالب</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- شريط التحكم بالشهر والأسبوع (يظهر في صفحة المتابعة) -->
+      <section class="control-card" id="control-bar">
+        <div class="control-row">
+          <div class="period-selectors">
+            <label for="month-select" style="font-weight: 700; font-size: 0.85rem; color: #475569;">الشهر:</label>
+            <select id="month-select" class="select-control">
+              <option value="شهر 1">شهر 1</option>
+              <option value="شهر 2">شهر 2</option>
+              <option value="شهر 3">شهر 3</option>
+              <option value="شهر 4">شهر 4</option>
+              <option value="شهر 5">شهر 5</option>
+              <option value="شهر 6">شهر 6</option>
+              <option value="شهر 7">شهر 7</option>
+              <option value="شهر 8">شهر 8</option>
+              <option value="شهر 9">شهر 9</option>
+              <option value="شهر 10">شهر 10</option>
+              <option value="شهر 11">شهر 11</option>
+              <option value="شهر 12">شهر 12</option>
+            </select>
+
+            <label for="week-select" style="font-weight: 700; font-size: 0.85rem; color: #475569; margin-right: 8px;">الأسبوع:</label>
+            <select id="week-select" class="select-control">
+              <option value="الأسبوع 1">الأسبوع 1</option>
+              <option value="الأسبوع 2">الأسبوع 2</option>
+              <option value="الأسبوع 3">الأسبوع 3</option>
+              <option value="الأسبوع 4">الأسبوع 4</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- اختيار اليوم (يظهر في صفحة المتابعة) -->
+        <div class="days-bar" id="days-nav-bar">
+          <div class="day-pill active" data-day="sunday" id="pill-sunday">
+            <span class="day-pill-name">الأحد</span>
+          </div>
+          <div class="day-pill" data-day="monday" id="pill-monday">
+            <span class="day-pill-name">الاثنين</span>
+          </div>
+          <div class="day-pill" data-day="tuesday" id="pill-tuesday">
+            <span class="day-pill-name">الثلاثاء</span>
+          </div>
+          <div class="day-pill" data-day="wednesday" id="pill-wednesday">
+            <span class="day-pill-name">الأربعاء</span>
+          </div>
+          <div class="day-pill" data-day="thursday" id="pill-thursday">
+            <span class="day-pill-name">الخميس</span>
+          </div>
+        </div>
+
+        <!-- أزرار العمليات السريعة والبحث -->
+        <div class="quick-tools" id="quick-tools-bar">
+          <div class="search-box-wrapper">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="student-search-input" 
+              class="search-input" 
+              placeholder="ابحث عن طالب بالاسم..." 
+              autocomplete="off"
+            />
+            <button type="button" id="btn-clear-search" class="clear-search-btn" style="display: none;" title="مسح البحث">✖</button>
+          </div>
+
+          <div class="filter-pills-group" id="filter-pills-group">
+            <button type="button" class="filter-pill active" data-filter="all" id="filter-all">
+              <span>الكل (<b id="count-filter-all">0</b>)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="unrecorded" id="filter-unrecorded" title="عرض الطلاب غير المسجلين أو الذين لم يكتمل رصدهم اليوم">
+              <span>غير مسجل / ناقص (<b id="count-filter-unrecorded">0</b>)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="done" id="filter-done">
+              <span>منجز بالكامل (<b id="count-filter-done">0</b>)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="needs-attention" id="filter-attention">
+              <span>غياب/اعتذار (<b id="count-filter-attention">0</b>)</span>
+            </button>
+          </div>
+
+          <div class="quick-actions-group">
+            <span class="live-save-status" id="live-save-status" title="يتم حفظ كل تغيير لحظياً في ذاكرة الجهاز والسحابة">
+              ⚡ <b>الحفظ التلقائي نشط</b>
+            </span>
+            <button class="btn btn-outline btn-sm" id="btn-mark-all-present" title="تسجيل الكل حاضر ومنجز">
+              <span>⚡ تسجيل الكل إنجاز</span>
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-clear-day" title="مسح تسجيلات هذا اليوم">
+              <span>🔄 مسح اليوم</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. صفحة الرصد اليومي والمتابعة -->
+      <section id="view-tracking" class="tab-view">
+        <div class="students-list" id="tracking-students-container">
+          <!-- يتم ملء بطاقات الطلاب ديناميكيًا عبر JavaScript -->
+        </div>
+      </section>
+
+      <!-- 2. صفحة المتابعة الفردية وتشخيص الأداء ومعالجة مواطن الضعف -->
+      <section id="view-followup" class="tab-view" style="display: none;">
+        <div class="followup-dashboard-container">
+          <!-- شريط التحكم والبحث للمتابعة -->
+          <div class="followup-header-card">
+            <div class="followup-title-row">
+              <div class="followup-title-group">
+                <div class="followup-icon">🔍</div>
+                <div>
+                  <h2 class="followup-title">مركز متابعة الطلاب ومعالجة مواطن الضعف</h2>
+                  <p class="followup-subtitle">رصد شامل لإنجاز كل طالب طوال الأسبوع، حضور الدروس والمراجعات، وتشخيص التنبيهات ونقاط التقصير لمعالجتها</p>
+                </div>
+              </div>
+              <div class="followup-period-group">
+                <div class="followup-select-wrap">
+                  <label for="followup-month-select">الشهر:</label>
+                  <select id="followup-month-select" class="select-control">
+                    <option value="شهر 1">شهر 1</option>
+                    <option value="شهر 2">شهر 2</option>
+                    <option value="شهر 3">شهر 3</option>
+                    <option value="شهر 4">شهر 4</option>
+                    <option value="شهر 5">شهر 5</option>
+                    <option value="شهر 6">شهر 6</option>
+                    <option value="شهر 7">شهر 7</option>
+                    <option value="شهر 8">شهر 8</option>
+                    <option value="شهر 9">شهر 9</option>
+                    <option value="شهر 10">شهر 10</option>
+                    <option value="شهر 11">شهر 11</option>
+                    <option value="شهر 12">شهر 12</option>
+                  </select>
+                </div>
+                <div class="followup-select-wrap">
+                  <label for="followup-week-select">الأسبوع:</label>
+                  <select id="followup-week-select" class="select-control">
+                    <option value="الأسبوع 1">الأسبوع 1</option>
+                    <option value="الأسبوع 2">الأسبوع 2</option>
+                    <option value="الأسبوع 3">الأسبوع 3</option>
+                    <option value="الأسبوع 4">الأسبوع 4</option>
+                  </select>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-export-followup-month-pdf" title="تحميل تقرير المتابعة الرسمي لجميع الطلاب للشهر المحدد بصيغة PDF">
+                  <span>📄 تصدير المتابعة للشهر PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- شريط البحث والتصفية -->
+            <div class="followup-filters-bar">
+              <div class="search-box-wrapper" style="max-width: 320px;">
+                <span class="search-icon">🔍</span>
+                <input 
+                  type="text" 
+                  id="followup-search-input" 
+                  class="search-input" 
+                  placeholder="ابحث عن طالب بالاسم..." 
+                  autocomplete="off"
+                />
+                <button type="button" id="btn-clear-followup-search" class="clear-search-btn" style="display: none;" title="مسح البحث">✖</button>
+              </div>
+
+              <!-- فلتر الأسرة -->
+              <div class="followup-family-pills">
+                <button type="button" class="followup-fam-btn active" data-followup-family="all" id="btn-followup-fam-all">
+                  <span>الكل (<b id="count-followup-all">0</b>)</span>
+                </button>
+                <button type="button" class="followup-fam-btn" data-followup-family="bamousa" id="btn-followup-fam-bamousa">
+                  <span>🏛️ أسرة باموسى (<b id="count-followup-bamousa">0</b>)</span>
+                </button>
+                <button type="button" class="followup-fam-btn" data-followup-family="akram" id="btn-followup-fam-akram">
+                  <span>🌟 أسرة أكرم (<b id="count-followup-akram">0</b>)</span>
+                </button>
+              </div>
+
+              <!-- فلتر حالة المتابعة والتشخيص (مبسط وواضح ومناسب للهاتف) -->
+              <div class="followup-status-filters" id="followup-status-filters">
+                <button type="button" class="status-filter-pill active" data-followup-filter="all">
+                  <span>الكل</span>
+                </button>
+                <button type="button" class="status-filter-pill alert-pill" data-followup-filter="needs-attention">
+                  <span>⚠️ يحتاج متابعة (<b id="count-followup-attn">0</b>)</span>
+                </button>
+                <button type="button" class="status-filter-pill" data-followup-filter="frequent-absent">
+                  <span>❌ غياب متكرر (<b id="count-followup-absent">0</b>)</span>
+                </button>
+                <button type="button" class="status-filter-pill success-pill" data-followup-filter="excellent">
+                  <span>🌟 التزام كامل (<b id="count-followup-excellent">0</b>)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- بطاقات KPIs سريعة لمواطن الضعف والتنبيهات في الأسبوع -->
+          <div class="followup-kpi-row" id="followup-kpi-summary">
+            <!-- يتم التوليد عبر JavaScript -->
+          </div>
+
+          <!-- قائمة وبطاقات المتابعة الفردية للطلاب -->
+          <div class="followup-students-grid" id="followup-students-container">
+            <!-- يتم تعبئة بطاقات الطلاب التفصيلية عبر JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. صفحة ترتيب الفوارس -->
+      <section id="view-leaderboard" class="tab-view" style="display: none;">
+        <div class="leaderboard-card">
+          <div class="leaderboard-header">
+            <div class="leaderboard-title">
+              <span>🏆 ترتيب الفوارس حسب النقاط الأسبوعية</span>
+            </div>
+            <button class="btn btn-whatsapp btn-sm btn-open-report" id="btn-leaderboard-report">
+              <span>📋 نسخ التقرير</span>
+            </button>
+          </div>
+          <div id="leaderboard-content">
+            <!-- جدول الترتيب يظهر هنا -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. صفحة الإحصائيات الشهرية (ملخص أداء الطلاب المبسط) -->
+      <section id="view-stats" class="tab-view" style="display: none;">
+        <div class="stats-dashboard-container">
+          <!-- شريط اختيار الشهر والتقرير -->
+          <div class="stats-header-bar">
+            <div class="stats-header-title-group">
+              <div class="stats-header-icon">📊</div>
+              <div>
+                <h2 class="stats-header-title">إحصائيات أداء الطلاب</h2>
+                <p class="stats-header-subtitle" id="stats-period-subtitle">ملخص بسيط وشامل لأداء الطلاب على مدار الشهر</p>
+              </div>
+            </div>
+            <div class="stats-header-actions">
+              <div class="stats-period-selector-pill">
+                <label for="stats-month-select" style="font-weight: 800; font-size: 0.82rem; color: #475569;">الشهر:</label>
+                <select id="stats-month-select" class="select-control" style="padding: 4px 10px; font-weight: 800; font-size: 0.84rem;">
+                  <option value="شهر 1">شهر 1</option>
+                  <option value="شهر 2">شهر 2</option>
+                  <option value="شهر 3">شهر 3</option>
+                  <option value="شهر 4">شهر 4</option>
+                  <option value="شهر 5">شهر 5</option>
+                  <option value="شهر 6">شهر 6</option>
+                  <option value="شهر 7">شهر 7</option>
+                  <option value="شهر 8">شهر 8</option>
+                  <option value="شهر 9">شهر 9</option>
+                  <option value="شهر 10">شهر 10</option>
+                  <option value="شهر 11">شهر 11</option>
+                  <option value="شهر 12">شهر 12</option>
+                </select>
+              </div>
+              <button class="btn btn-whatsapp btn-sm" id="btn-copy-monthly-stats-report" title="نسخ تقرير الملخص الإحصائي الشهري">
+                <span>📋 نسخ تقرير الشهر</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 بطاقات إحصائية رئيسية ومباشرة -->
+          <div class="stats-kpi-grid" id="stats-kpi-cards">
+            <!-- يتم التوليد عبر JavaScript -->
+          </div>
+
+          <!-- رسم بياني لمقارنة نسبة الحضور بين الأسر خلال الشهر -->
+          <div class="stats-card family-comparison-card" id="stats-family-comparison-card">
+            <div class="stats-card-header">
+              <div class="stats-card-title">
+                <span>📊 رسم بياني: مقارنة نسبة الحضور بين أسرة باموسى وأسرة أكرم</span>
+              </div>
+              <span class="stats-badge-pill blue-pill" id="stats-family-leader-badge">مقارنة الحضور</span>
+            </div>
+            <div class="stats-card-body" id="stats-family-comparison-body">
+              <!-- يتم ملء الرسم البياني للمقارنة عبر JavaScript -->
+            </div>
+          </div>
+
+          <!-- لوحة الشرف للطلاب الأكثر التزاماً -->
+          <div class="stats-card">
+            <div class="stats-card-header">
+              <div class="stats-card-title">
+                <span>🌟 الطلاب الأكثر التزاماً وتميزاً في الشهر</span>
+              </div>
+              <span class="stats-badge-pill gold-pill" id="stats-committed-count-badge">0 متفوقين</span>
+            </div>
+            <div class="stats-card-body" id="stats-top-committed-container">
+              <!-- قائمة المتفوقين -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. صفحة إدارة الطلاب -->
+      <section id="view-students" class="tab-view" style="display: none;">
+        <div class="management-grid">
+          <!-- بطاقات إضافة الطلاب -->
+          <div class="add-student-card">
+            <div class="card-tabs-header">
+              <button type="button" class="sub-tab-btn active" id="tab-add-single">➕ إضافة طالب فردي</button>
+              <button type="button" class="sub-tab-btn" id="tab-add-bulk">📋 إضافة دفعة طلاب (سريعة)</button>
+              <button type="button" class="sub-tab-btn" id="tab-add-backup">💾 النسخ الاحتياطي (JSON)</button>
+            </div>
+
+            <!-- نموذج إضافة فردي -->
+            <form class="add-student-form" id="add-student-form" style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="new-student-name" class="input-text" placeholder="اكتب اسم الطالب الجديد..." required style="flex: 1;" />
+                <select id="new-student-family" class="select-control" style="border-radius: var(--radius-md);">
+                  <option value="bamousa">🏛️ أسرة باموسى</option>
+                  <option value="akram">🌟 أسرة أكرم</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btn-add-student" style="align-self: flex-start;">
+                <span>➕ إضافة الطالب</span>
+              </button>
+            </form>
+
+            <!-- نموذج إضافة متعددة / دفعة واحدة -->
+            <form id="bulk-student-form" style="display: none; margin-top: 14px;">
+              <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 8px;">
+                الصق أسماء الطلاب هنا (كل اسم في سطر منفصل) لإضافتهم جميعاً بضغطة واحدة:
+              </p>
+              <textarea id="bulk-students-names" class="input-text" rows="5" placeholder="أحمد محمد&#10;خالد عبدالله&#10;سعد الفرج..."></textarea>
+              <div style="display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; flex-wrap: wrap;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-load-official-roster">
+                  <span>🏛️ استعادة القائمة الرسمية للأسر (46 طالباً)</span>
+                </button>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span>➕ إضافة الدفعة</span>
+                </button>
+              </div>
+            </form>
+
+            <!-- قسم النسخ الاحتياطي JSON (تصدير واستعادة متقدمة) -->
+            <div id="backup-json-section" style="display: none; margin-top: 14px;">
+              <div class="backup-grid">
+                <!-- كارت تصدير نسخة احتياطية -->
+                <div class="backup-box export-box">
+                  <div class="backup-box-header">
+                    <span class="backup-box-icon">📥</span>
+                    <div>
+                      <h4 class="backup-box-title">تصدير نسخة احتياطية (ملف JSON)</h4>
+                      <p class="backup-box-desc">احفظ نسخة كاملة من بيانات الطلاب وسجلات التقييم والنقاط لجميع الأسابيع والأشهر في ملف JSON على جهازك.</p>
+                    </div>
+                  </div>
+
+                  <div class="backup-stats-pill">
+                    <span>📊 تتضمن: <b id="backup-stat-students">0</b> طالب و <b id="backup-stat-records">0</b> سجل رصد</span>
+                    <span class="backup-time-tag" id="backup-stat-time">محفوظ تلقائياً</span>
+                  </div>
+
+                  <div class="backup-actions-row">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-download-json-backup">
+                      <span>📥 تحميل النسخة الاحتياطية (.json)</span>
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-copy-json-backup">
+                      <span>📋 نسخ كود JSON</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- كارت استيراد واستعادة نسخة احتياطية -->
+                <div class="backup-box import-box">
+                  <div class="backup-box-header">
+                    <span class="backup-box-icon">📤</span>
+                    <div>
+                      <h4 class="backup-box-title">استعادة نسخة احتياطية من JSON</h4>
+                      <p class="backup-box-desc">استرجع بيانات الطلاب وسجلات الرصد السابقة من ملف JSON أو بلصق النص مباشرة.</p>
+                    </div>
+                  </div>
+
+                  <!-- منطقة السحب والإفلات لاختيار ملف -->
+                  <div class="import-drop-zone" id="backup-drop-zone">
+                    <span class="drop-icon">📁</span>
+                    <p class="drop-title">اسحب وأفلت ملف JSON هنا، أو اضغط للاختيار</p>
+                    <p class="drop-hint">الملفات المدعومة: *.json</p>
+                    <input type="file" id="backup-file-input" accept=".json,application/json" style="display: none;" />
+                  </div>
+
+                  <!-- خيار اللصق اليدوي -->
+                  <div style="margin-top: 4px;">
+                    <button type="button" class="btn-text-toggle" id="btn-toggle-json-paste">
+                      <span>✏️ أو الصق محتوى الـ JSON يدوياً</span>
+                    </button>
+                    <div id="json-paste-wrapper" style="display: none; margin-top: 8px;">
+                      <textarea id="json-paste-textarea" class="input-text" rows="4" placeholder="الصق كود الـ JSON هنا..."></textarea>
+                      <div style="display: flex; gap: 8px; margin-top: 6px;">
+                        <button type="button" class="btn btn-outline btn-sm" id="btn-validate-pasted-json">
+                          <span>🔍 فحص وتجهيز للاستعادة</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- بطاقة معاينة النسخة قبل التطبيق -->
+                  <div id="backup-preview-card" class="backup-preview-card" style="display: none;">
+                    <div class="preview-header">
+                      <span class="preview-badge">✓ ملف نسخة احتياطية صالح وجاهز</span>
+                      <span class="preview-date" id="backup-preview-date">--</span>
+                    </div>
+                    <div class="preview-details">
+                      <div class="preview-metric">
+                        <span class="metric-label">عدد الطلاب:</span>
+                        <b class="metric-val" id="backup-preview-students-count">0</b>
+                      </div>
+                      <div class="preview-metric">
+                        <span class="metric-label">سجلات الرصد:</span>
+                        <b class="metric-val" id="backup-preview-records-count">0</b>
+                      </div>
+                      <div class="preview-metric">
+                        <span class="metric-label">توزيع الأسر:</span>
+                        <b class="metric-val" id="backup-preview-families-info">--</b>
+                      </div>
+                    </div>
+                    <div class="preview-actions">
+                      <button type="button" class="btn btn-primary btn-sm" id="btn-restore-full-backup" style="background: #16a34a; border-color: #15803d;">
+                        <span>⚡ استعادة واستبدال كامل للبيانات</span>
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" id="btn-restore-merge-backup">
+                        <span>🔄 دمج مع البيانات الحالية</span>
+                      </button>
+                      <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-preview" style="color: #64748b;">
+                        <span>إلغاء</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- قائمة الطلاب الحالية -->
+          <div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <h3 style="font-size: 0.95rem; font-weight: 800; color: #475569;">
+                قائمة الطلاب المسجلين (<span id="manage-count-label">0</span>)
+              </h3>
+              <input 
+                type="text" 
+                id="manage-search-input" 
+                class="input-text" 
+                placeholder="البحث عن اسم ..." 
+                style="max-width: 180px; padding: 5px 10px; font-size: 0.82rem;"
+              />
+            </div>
+            <div class="students-manage-list" id="students-manage-list">
+              <!-- قائمة الطلاب تظهر هنا -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    </div> <!-- /app-layout -->
+
+    <!-- نافذة تقرير الواتساب المنبثقة (Modal) -->
+    <div class="modal-backdrop" id="report-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <span>💬 نسخ تقرير الواتساب</span>
+          </h2>
+          <button class="modal-close" aria-label="إغلاق">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- اختيار الأسرة لتقرير الواتساب -->
+          <div class="report-family-container" style="margin-bottom: 16px;">
+            <p class="modal-subtitle">اختر الأسرة لنسخ تقرير الحضور الخاص بها:</p>
+            <div class="report-family-pills-group" id="report-family-pills">
+              <button type="button" class="report-family-btn active" data-report-family="bamousa" id="btn-rep-fam-bamousa">
+                <span>🏛️ أسرة باموسى</span>
+                <span class="report-fam-badge" id="badge-rep-fam-bamousa">23 طالب</span>
+              </button>
+              <button type="button" class="report-family-btn" data-report-family="akram" id="btn-rep-fam-akram">
+                <span>🌟 أسرة أكرم</span>
+                <span class="report-fam-badge" id="badge-rep-fam-akram">23 طالب</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p class="modal-subtitle">اختر الأيام المراد تضمينها في التقرير:</p>
+            <div class="days-selection-grid" style="margin-top: 8px;">
+              <label class="day-checkbox-label checked" id="lbl-chk-sunday">
+                <input type="checkbox" class="report-day-checkbox" value="sunday" checked />
+                <span>الأحد</span>
+              </label>
+              <label class="day-checkbox-label checked" id="lbl-chk-monday">
+                <input type="checkbox" class="report-day-checkbox" value="monday" checked />
+                <span>الاثنين</span>
+              </label>
+              <label class="day-checkbox-label checked" id="lbl-chk-tuesday">
+                <input type="checkbox" class="report-day-checkbox" value="tuesday" checked />
+                <span>الثلاثاء</span>
+              </label>
+              <label class="day-checkbox-label checked" id="lbl-chk-wednesday">
+                <input type="checkbox" class="report-day-checkbox" value="wednesday" checked />
+                <span>الأربعاء</span>
+              </label>
+              <label class="day-checkbox-label checked" id="lbl-chk-thursday">
+                <input type="checkbox" class="report-day-checkbox" value="thursday" checked />
+                <span>الخميس</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- اختصارات سريعة لاختيار الأيام -->
+          <div class="quick-days-presets">
+            <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; align-self: center;">اختيار سريع:</span>
+            <button type="button" class="preset-chip" id="preset-all-days">جميع الأيام</button>
+            <button type="button" class="preset-chip" id="preset-today-only">اليوم المحدد فقط</button>
+            <button type="button" class="preset-chip" id="preset-sun-tue-thu">الأحد + الثلاثاء + الخميس</button>
+          </div>
+
+          <!-- معاينة نص التقرير -->
+          <div>
+            <p class="modal-subtitle" style="margin-bottom: 6px;">معاينة نص الرسالة:</p>
+            <pre class="report-preview-box" id="report-preview-text"></pre>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-close-modal" id="btn-cancel-report">إلغاء</button>
+          <button type="button" class="btn btn-whatsapp" id="btn-share-whatsapp">
+            <span>إرسال لواتساب 💬</span>
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-copy-report">
+            <span>📋 نسخ التقرير</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تأكيد الإجراءات المخصصة (Confirm Modal) -->
+    <div class="modal-backdrop" id="confirm-modal">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header">
+          <h2 class="modal-title" id="confirm-modal-title">
+            <span>⚠️ تأكيد الإجراء</span>
+          </h2>
+          <button class="modal-close" id="btn-close-confirm-modal" aria-label="إغلاق">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-modal-message" style="font-size: 0.95rem; color: #334155; line-height: 1.6;"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-confirm">إلغاء</button>
+          <button type="button" class="btn btn-danger" id="btn-action-confirm">
+            <span id="confirm-modal-btn-text">تأكيد</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تعديل اسم الطالب (Edit Student Modal) -->
+    <div class="modal-backdrop" id="edit-student-modal">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <span>✏️ تعديل اسم الطالب</span>
+          </h2>
+          <button class="modal-close" id="btn-close-edit-student-modal" aria-label="إغلاق">&times;</button>
+        </div>
+        <form id="edit-student-form">
+          <div class="modal-body">
+            <div class="form-field">
+              <label for="edit-student-input-name" class="form-label">اسم الطالب:</label>
+              <input type="text" id="edit-student-input-name" class="input-text" required autofocus />
+            </div>
+            <div class="form-field" style="margin-top: 10px;">
+              <label for="edit-student-family" class="form-label">الأسرة:</label>
+              <select id="edit-student-family" class="select-control" style="width: 100%; border-radius: var(--radius-md);">
+                <option value="bamousa">🏛️ أسرة باموسى</option>
+                <option value="akram">🌟 أسرة أكرم</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="btn-cancel-edit-student">إلغاء</button>
+            <button type="submit" class="btn btn-primary">
+              <span>حفظ الاسم</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- نافذة تقرير الطالب الأسبوعي الفردي وتشخيص الأداء ومعالجة نقاط الضعف (Student Weekly Report Modal) -->
+    <div class="modal-backdrop" id="student-report-modal">
+      <div class="modal-card modal-card-lg" id="printable-student-report-card">
+        <div class="modal-header">
+          <div class="student-report-header-title">
+            <span class="report-badge-icon">📄</span>
+            <div>
+              <h2 class="modal-title" id="rep-student-name">تقرير الطالب الأسبوعي</h2>
+              <p class="modal-subtitle" id="rep-student-subtitle">متابعة شاملة لإنجاز الطالب طوال الأسبوع وتشخيص مواطن القوة ونقاط الضعف</p>
+            </div>
+          </div>
+          <button class="modal-close" id="btn-close-student-report-modal" aria-label="إغلاق">&times;</button>
+        </div>
+
+        <div class="modal-body" id="rep-student-body" style="padding: 16px 20px;">
+          <!-- يتم ملء التقرير التفصيلي والتشخيص عبر JavaScript -->
+        </div>
+
+        <div class="modal-footer no-print" style="justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+          <button type="button" class="btn btn-outline" id="btn-close-rep-footer">إغلاق</button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary" id="btn-copy-student-text" title="نسخ نص التقرير المنسق كاملاً">
+              <span>📋 نسخ التقرير</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-print-student-report" title="طباعة التقرير أو حفظه كملف PDF">
+              <span>🖨️ طباعة / تصدير PDF</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة إدارة وتغيير رمز المرور (Change PIN Modal) -->
+    <div class="modal-backdrop" id="change-pin-modal">
+      <div class="modal-card modal-card-sm" style="max-width: 440px;">
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.4rem;">🔑</span>
+            <div>
+              <h2 class="modal-title">إدارة رمز المرور (PIN)</h2>
+              <p class="modal-subtitle">تعديل رمز حماية التطبيق ومزامنته سحابياً للمشرفين</p>
+            </div>
+          </div>
+          <button class="modal-close" id="btn-close-pin-modal" aria-label="إغلاق">&times;</button>
+        </div>
+        <form id="form-change-pin">
+          <div class="modal-body" style="padding: 16px 20px;">
+            <div class="form-field" style="margin-bottom: 12px;">
+              <label for="input-current-pin" class="form-label">رمز المرور الحالي:</label>
+              <input type="password" id="input-current-pin" class="input-text" required placeholder="أدخل رمز المرور الحالي" inputmode="numeric" maxlength="8" style="direction: ltr; text-align: center; font-size: 1.15rem; letter-spacing: 4px; font-family: monospace;" />
+            </div>
+            <div class="form-field" style="margin-bottom: 12px;">
+              <label for="input-new-pin" class="form-label">رمز المرور الجديد (4 إلى 8 أرقام):</label>
+              <input type="password" id="input-new-pin" class="input-text" required placeholder="أدخل الرمز الجديد" inputmode="numeric" maxlength="8" style="direction: ltr; text-align: center; font-size: 1.15rem; letter-spacing: 4px; font-family: monospace;" />
+            </div>
+            <div class="form-field" style="margin-bottom: 12px;">
+              <label for="input-confirm-pin" class="form-label">تأكيد رمز المرور الجديد:</label>
+              <input type="password" id="input-confirm-pin" class="input-text" required placeholder="أعد إدخال الرمز الجديد للتأكيد" inputmode="numeric" maxlength="8" style="direction: ltr; text-align: center; font-size: 1.15rem; letter-spacing: 4px; font-family: monospace;" />
+            </div>
+            <div class="pin-modal-alert" id="pin-modal-error" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;">
+              <span id="pin-modal-error-text"></span>
+            </div>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5;">
+              ℹ️ <b>ملاحظة هامة:</b> يتم حفظ الرمز الجديد ومزامنته سحابياً على الفور لجميع المشرفين المصرح لهم.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="btn-cancel-pin-modal">إلغاء</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-new-pin">
+              <span>💾 حفظ الرمز الجديد</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- إشعار التوست (Toast) -->
+    <div class="toast-msg" id="app-toast">
+      <span>تم النسخ بنجاح!</span>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
